@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable_list_view/flutter_slidable_list_view.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stockslog/helpers/dbhelper.dart';
 import 'package:stockslog/models/stocks_table.dart';
 import 'package:stockslog/pages/add_new_stock.dart';
@@ -14,7 +13,6 @@ class StocksList extends StatefulWidget {
 
   @override
   _StocksListState createState() => _StocksListState();
-
 }
 
 class _StocksListState extends State<StocksList> {
@@ -221,6 +219,26 @@ class _StocksListState extends State<StocksList> {
         setState(() {
           _gridIndex = index;
         });
+      },
+      onLongPress: () {
+        showDialog(
+            context: context,
+            child: AlertDialog(
+              title: Text(stocks[index].name),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text('ویرایش'),
+                  onPressed: () => _editItem(index),
+                ),
+                FlatButton(
+                  child: Text('حذف'),
+                  onPressed: () {
+                    _deleteItem(index);
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
+            ));
       },
       child: Card(
           color: _gridIndex == index ? Theme.of(context).backgroundColor : null,
