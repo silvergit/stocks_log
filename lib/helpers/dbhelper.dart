@@ -28,7 +28,7 @@ class DBHelper {
     String path = join(directory.path, Statics.DB_FOLDER, dbName);
 
     var dB = await openDatabase(path,
-        version: 1, onCreate: _onCreate, onUpgrade: _onUpgrade);
+        version: 2, onCreate: _onCreate, onUpgrade: _onUpgrade);
     return dB;
   }
 
@@ -37,7 +37,35 @@ class DBHelper {
   }
 
   void _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    await db.execute("DROP TABLE IF EXISTS ${StocksTable.TABLE_NAME}");
+
+    await db.execute("ALTER TABLE " + StocksTable.TABLE_NAME + " RENAME TO tmp;");
+    await db.execute("CREATE TABLE " +
+        StocksTable.TABLE_NAME +
+        "(" +
+        StocksTable.ID +
+        " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE," +
+        StocksTable.NAME +
+        " TEXT NOT NULL," +
+        StocksTable.BUY_DATE +
+        " TEXT NOT NULL," +
+        StocksTable.SELL_DATE +
+        " TEXT," +
+        StocksTable.BUY_PRICE +
+        " REAL NOT NULL," +
+        StocksTable.SELL_PRICE +
+        " REAL," +
+        StocksTable.COMMENTS +
+        " TEXT " +
+        ")");
+
+    await db.execute(
+        "INSERT INTO stocks_table"
+            "(id, name, buy_date, sell_date, buy_price,sell_price,comments )"
+            "SELECT "
+            "id, name, buy_date, sell_date, buy_price,sell_price,comments"
+            " FROM tmp;");
+
+    await db.execute("DROP TABLE IF EXISTS tmp");
 
     _onCreate(db, newVersion);
   }
@@ -73,6 +101,28 @@ class DBHelper {
     var dbClient = await db;
     List<Map> list =
         await dbClient.query(StocksTable.TABLE_NAME, orderBy: StocksTable.NAME);
+    List<StocksTable> stocks = new List();
+
+    for (var node in list) {
+      var stock = new StocksTable();
+      stock.name = node[StocksTable.NAME];
+      stock.buyDate = node[StocksTable.BUY_DATE];
+      stock.sellDate = node[StocksTable.SELL_DATE];
+      stock.buyPrice = node[StocksTable.BUY_PRICE];
+      stock.sellPrice = node[StocksTable.SELL_PRICE];
+      stock.comments = node[StocksTable.COMMENTS];
+      stock.id = node[StocksTable.ID];
+      stocks.add(stock);
+    }
+
+    return stocks;
+  }
+
+  Future<List<StocksTable>> getFinishedStocks() async {
+    var dbClient = await db;
+    List<Map> list =
+    await dbClient.rawQuery("SELECT * FROM " + StocksTable.TABLE_NAME + " WHERE " + StocksTable.SELL_PRICE + " IS NOT NULL");
+
     List<StocksTable> stocks = new List();
 
     for (var node in list) {

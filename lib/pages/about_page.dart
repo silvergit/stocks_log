@@ -125,6 +125,8 @@ class _AboutPageState extends State<AboutPage> {
 
     Text _developer = Text('برنامه نویس: علیرضا پژوهش');
 
+    Text _donate = Text('این برنامه رایگان است، اگر تمایل داشتید برای روح رفتگان خود و پدر من یک فاتحه بخوانید.');
+
     Column _contact = Column(
       children: <Widget>[
         Text('تماس با ما'),
@@ -187,6 +189,8 @@ class _AboutPageState extends State<AboutPage> {
               _description,
               _spaceH20,
               _developer,
+              _spaceH20,
+              _donate,
               _spaceH30,
               _contact
             ],

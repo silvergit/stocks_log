@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stockslog/helpers/dbhelper.dart';
 import 'package:stockslog/models/stocks_table.dart';
 import 'package:stockslog/pages/add_new_stock.dart';
@@ -15,6 +16,31 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int listType = 0;
+
+  SharedPreferences prefs;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _loadPreferences();
+  }
+
+  _loadPreferences() async {
+    prefs = await SharedPreferences.getInstance();
+
+    int lt = prefs.getInt('list_type') == null ? 0 : prefs.getInt('list_type');
+
+    setState(() {
+      listType = lt;
+    });
+  }
+
+  _savePreferences() async {
+    prefs = await SharedPreferences.getInstance();
+
+    prefs.setInt('list_type', listType);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +66,7 @@ class _HomePageState extends State<HomePage> {
                     setState(() {
                       listType == 0 ? listType = 1 : listType = 0;
                     });
+                    _savePreferences();
                   },
                 ),
               ),

@@ -17,8 +17,10 @@ class _SideDrawerState extends State<SideDrawer> {
 
   Future<void> _launched;
   String _bzrMoreAppsByMorface = 'https://cafebazaar.ir/developer/morface';
-  String _bzrShelemShomarAddress =
-      'https://cafebazaar.ir/app/com.morface.shelem_shomar';
+  String _mktMoreAppsByMorface = 'https://myket.ir/developer/dev-30540';
+  String _bzrShelemShomarAddress = 'https://cafebazaar.ir/app/com.morface.shelem_shomar';
+  String _mktShelemShomarAddress = 'https://myket.ir/app/com.morface.shelem_shomar';
+
 
   @override
   initState() {
@@ -36,9 +38,6 @@ class _SideDrawerState extends State<SideDrawer> {
       projectVersion = 'خطا در دریافت نسخه برنامه.';
     }
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
     if (!mounted) return;
 
     setState(() {
@@ -135,7 +134,7 @@ class _SideDrawerState extends State<SideDrawer> {
         leading: Image.asset('assets/ss.png',width: 30,),
         title: Text('دانلود شلم شمار پیشرفته'),
         onTap: () {
-          _launched = _launchInBrowser(_bzrShelemShomarAddress);
+          _launched = _launchInBrowser(_mktShelemShomarAddress);
         },
       );
   }
@@ -146,7 +145,7 @@ class _SideDrawerState extends State<SideDrawer> {
         leading: Icon(Icons.apps),
         title: Text('برنامه‌های دیگر ما'),
         onTap: () {
-          _launched = _launchInBrowser(_bzrMoreAppsByMorface);
+          _launched = _launchInBrowser(_mktMoreAppsByMorface);
         },
       );
   }

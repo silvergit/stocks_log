@@ -21,11 +21,11 @@ class StocksTable {
       BUY_DATE +
       " TEXT NOT NULL," +
       SELL_DATE +
-      " TEXT NOT NULL," +
+      " TEXT ," +
       BUY_PRICE +
       " REAL NOT NULL," +
       SELL_PRICE +
-      " REAL NOT NULL," +
+      " REAL ," +
       COMMENTS +
       " TEXT " +
       ")";

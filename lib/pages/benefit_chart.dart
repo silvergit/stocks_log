@@ -32,10 +32,17 @@ class _BenefitChartState extends State<BenefitChart> {
 
   List<Color> chartColors;
 
+  double _commission = 1.42;
+
   @override
   void initState() {
     super.initState();
     stocks = widget.stocks;
+
+    for(var item in stocks) {
+      print(item.sellPrice.toString());
+    }
+
     _datePicked = stocks.length < 2
         ? _getYearsList()[0]
         : _getYearsList()[(_getYearsList().length / 2).round()];
@@ -125,10 +132,10 @@ class _BenefitChartState extends State<BenefitChart> {
   _calculateCommission(double buy, double sell) {
     double sub = sell - buy;
     if (sub == 0) {
-      return (buy * 1.5 / 100) * -1;
+      return (buy * -_commission / 100) * -1;
     }
 
-    return sub > 0 ? sub - (sub * 1.5 / 100) : sub + (sub * 1.5 / 100);
+    return sub > 0 ? sub - (sub * _commission / 100) : sub + (sub * 1.5 / 100);
   }
 
   double _calculatePercent(double buy, double profit) {

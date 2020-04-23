@@ -15,7 +15,7 @@ class ChartPage extends StatelessWidget {
       ),
       drawer: SideDrawer(),
       body: FutureBuilder<List<StocksTable>>(
-        future: db.getStocks(),
+        future: db.getFinishedStocks(),
         builder:
             (BuildContext context, AsyncSnapshot<List<StocksTable>> snapshot) {
           switch (snapshot.connectionState) {
@@ -23,7 +23,7 @@ class ChartPage extends StatelessWidget {
               return Center(child: Text('None'));
               break;
             case ConnectionState.waiting:
-              return Center(child: Text('Waiting'));
+              return Center(child: Center(child: CircularProgressIndicator(),));
               break;
             case ConnectionState.active:
               return Center(child: Text('Active'));

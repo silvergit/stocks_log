@@ -25,6 +25,7 @@ class _AddNewStockState extends State<AddNewStock> {
   bool _validateName;
   bool _validateSellPrice;
   bool _validateBuyPrice;
+  bool _validateSellDate;
 
   @override
   void initState() {
@@ -38,21 +39,23 @@ class _AddNewStockState extends State<AddNewStock> {
     _stockSellDateController = new TextEditingController();
 
     _stockBuyDateController.text = PersianDate(format: "yyyy/mm/dd").now;
-    _stockSellDateController.text = PersianDate(format: "yyyy/mm/dd").now;
+    _stockSellDateController.text = '';
 
     if (widget.stock != null) {
       _stockNameController.text = widget.stock.name;
       _stockBuyDateController.text = widget.stock.buyDate;
       _stockSellDateController.text = widget.stock.sellDate;
       _stockBuyPriceController.text = widget.stock.buyPrice.toStringAsFixed(1);
-      _stockSellPriceController.text =
-          widget.stock.sellPrice.toStringAsFixed(1);
+      _stockSellPriceController.text = widget.stock.sellPrice == null
+          ? null
+          : widget.stock.sellPrice.toStringAsFixed(1);
       _stockCommentController.text = widget.stock.comments;
     }
 
     _validateName = false;
     _validateSellPrice = false;
     _validateBuyPrice = false;
+    _validateSellDate = false;
   }
 
   @override
@@ -116,12 +119,25 @@ class _AddNewStockState extends State<AddNewStock> {
             ? setState(() => _validateBuyPrice = true)
             : setState(() => _validateBuyPrice = false);
 
-        _stockSellPriceController.text.isEmpty
-            ? setState(() => _validateSellPrice = true)
-            : setState(() => _validateSellPrice = false);
+//        _stockSellPriceController.text.isEmpty
+//            ? setState(() => _validateSellPrice = true)
+//            : setState(() => _validateSellPrice = false);
 
-        if (_validateName || _validateBuyPrice || _validateSellPrice) {
+        if (_stockSellPriceController.text.isNotEmpty) {
+          _stockSellDateController.text.isEmpty
+              ? setState(() => _validateSellDate = true)
+              : setState(() => _validateSellDate = false);
+        }
+
+//        if (_validateName || _validateBuyPrice || _validateSellPrice) {
+        if (_validateName || _validateBuyPrice) {
           return;
+        }
+
+        if (_stockSellPriceController.text.isNotEmpty) {
+          if (_validateSellDate) {
+            return;
+          }
         }
 
         if (widget.stock != null) {
@@ -141,7 +157,8 @@ class _AddNewStockState extends State<AddNewStock> {
               double.tryParse(_stockBuyPriceController.text),
               double.tryParse(_stockSellPriceController.text));
         }
-      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => HomePage()));
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => HomePage()));
       },
       child: Icon(Icons.done),
     );
@@ -158,7 +175,9 @@ class _AddNewStockState extends State<AddNewStock> {
                 _buildName(),
                 _buildBuyPrice(),
                 _buildBuyDate(),
-                SizedBox(height: 10.0,),
+                SizedBox(
+                  height: 10.0,
+                ),
                 _buildSellPrice(),
                 _buildSellDate(),
                 _buildComment()
@@ -190,7 +209,10 @@ class _AddNewStockState extends State<AddNewStock> {
       decoration: InputDecoration(
         labelText: 'مجموع خرید',
         errorText: _validateBuyPrice ? 'مجموع خرید نمی‌تواند خالی باشد' : null,
-        icon: Icon(Icons.add_circle_outline, color: Colors.green,),
+        icon: Icon(
+          Icons.add_circle_outline,
+          color: Colors.green,
+        ),
       ),
     );
   }
@@ -204,8 +226,11 @@ class _AddNewStockState extends State<AddNewStock> {
       ],
       decoration: InputDecoration(
         labelText: 'مجموع فروش',
-        errorText: _validateSellPrice ? 'مجموع فروش نمی‌تواند خالی باشد' : null,
-        icon: Icon(Icons.remove_circle_outline, color: Colors.red,),
+//        errorText: _validateSellPrice ? 'مجموع فروش نمی‌تواند خالی باشد' : null,
+        icon: Icon(
+          Icons.remove_circle_outline,
+          color: Colors.red,
+        ),
       ),
     );
   }
@@ -216,7 +241,11 @@ class _AddNewStockState extends State<AddNewStock> {
       controller: _stockBuyDateController,
       keyboardType: TextInputType.numberWithOptions(),
       decoration: InputDecoration(
-          labelText: 'تاریخ خرید', icon: Icon(Icons.calendar_today, color: Colors.green,)),
+          labelText: 'تاریخ خرید',
+          icon: Icon(
+            Icons.calendar_today,
+            color: Colors.green,
+          )),
     );
   }
 
@@ -226,12 +255,19 @@ class _AddNewStockState extends State<AddNewStock> {
       controller: _stockSellDateController,
       keyboardType: TextInputType.numberWithOptions(),
       decoration: InputDecoration(
-          labelText: 'تاریخ فروش', icon: Icon(Icons.calendar_today, color: Colors.red,)),
+        labelText: 'تاریخ فروش',
+        icon: Icon(
+          Icons.calendar_today,
+          color: Colors.red,
+        ),
+        errorText: _validateSellDate ? 'تاریخ فروش نمی‌تواند خالی باشد' : null,
+      ),
     );
   }
 
   _buildComment() {
-    return TextField(maxLines: 4,
+    return TextField(
+      maxLines: 4,
       decoration: InputDecoration(labelText: 'توضیحات'),
       controller: _stockCommentController,
     );
